@@ -26,7 +26,7 @@ chat=client.chats.create(
 total_token=0
 
 print('-'*45)
-print(f'Basic Level Chatbot\nQ to quit.\nT for token')
+print(f'Basic Level Chatbot\nQ to quit.\nT for token\nH for history')
 print('-'*45)
 
 while True:
@@ -68,7 +68,7 @@ while True:
     print(f'AI: {response.text}')
     
     
-    # here response is the variable in which it stores what gemini sends back everything. like text, meta data, usage info and possibly satefy info.add()
+    # here response is the variable in which it stores what gemini sends back everything. like text, meta data, usage info and possibly satefy
     
     
     # usage_meta_data is property that contains info about token usage 
@@ -79,10 +79,3 @@ while True:
     # With every chat it prints total token used and used by this chat 
     print(f'Token used in chat {token_used}')
     
-    
-    
-
-    
-
-
-
