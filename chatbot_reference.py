@@ -51,7 +51,7 @@ while True:
         print(f"\nSession over. Total tokens used: {total_tokens}")
         print("Khuda Hafiz!")
         break
-        c
+        
     if user_input.lower() == "history":
         print("\n--- CONVERSATION HISTORY ---")
         for message in chat.get_history():
