@@ -13,7 +13,12 @@ client=genai.Client() # Makes a client with gemini, so gemini knows this is a cl
 chat=client.chats.create(
     model='gemini-2.5-flash',
     config=types.GenerateContentConfig(
-        system_instruction='You will reply me with one word only. So we use very less tokens'
+        system_instruction="""
+        You are MindWired. My personal AI chatbot. 
+        Your tone should be strict, honest, no false hopes.
+        You will reply in short, precise to the point answers
+        """,
+        temperature=0.7
     )
 )
 
@@ -41,15 +46,26 @@ while True:
     
     if user_input.lower()=='t':
         print(f'Total Token used:{total_token}')
+       
+        continue
+        
         
         
     # Checking history of chat     
+    if user_input.lower()=='h':
+        history=chat.get_history()
+        for i in history:
+            print(f'{i.role}: {i.parts[0].text}')
+            
+
+        continue
+    
         
         
-        
+    
     # Sending user message to gemini and getting back its reply
     response=chat.send_message(user_input)
-    print(response.text)
+    print(f'AI: {response.text}')
     
     
     # here response is the variable in which it stores what gemini sends back everything. like text, meta data, usage info and possibly satefy info.add()
