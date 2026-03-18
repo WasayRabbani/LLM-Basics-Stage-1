@@ -3,7 +3,7 @@ Use your API key from Google AI Studio. Store it in .env file
 install libraries using 
 pip install google-genai python-dotenv.
 Never share your API key with anyone.
-Always use env file to store it and necer upload env file to github.
+Always use env file to store it and never upload env file to github.
 Happy Coding!
 """
 
