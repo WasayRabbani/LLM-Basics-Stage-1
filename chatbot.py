@@ -1,80 +1,103 @@
+"""
+Use your API key from Google AI Studio. Store it in .env file
+install libraries using 
+pip install google-genai python-dotenv.
+Never share your API key with anyone.
+Always use env file to store it and necer upload env file to github.
+Happy Coding!
+"""
+
+
 from google import genai
 from dotenv import load_dotenv
-from google.genai import types
 import os
-
-load_dotenv() # loading api key into file
-
-client=genai.Client() # Makes a client with gemini, so gemini knows this is a client which i will provide service
+from google.genai import types
+import json
 
 
-# This makes a chat which can have multiple messages. Also client makes it remember which person it is chatting to. Here connection made and gemini knows how to behave
+load_dotenv()
+
+# Connection with LLM (Gemini)
+client=genai.Client()
+
+
+def load_history():
+        data=[]
+        if os.path.exists('history.json'):
+            with open('history.json','r') as f:
+              data=json.load(f)
+            history=[]
+            for i in data:
+                history.append(
+                    types.Content(
+                        role=i['role'],parts=[types.Part(text=i['content'])]))  
+            return history
+        return []
+
+def save_history():
+    history=chat.get_history()
+    data=[]
+    for i in history:
+        data.append(
+            {'role':i.role,'content':i.parts[0].text}
+        )
+    with open('history.json','w') as f:
+        json.dump(data,f)
 
 chat=client.chats.create(
+    
     model='gemini-2.5-flash',
+    history=load_history(),
     config=types.GenerateContentConfig(
-        system_instruction="""
-        You are MindWired. My personal AI chatbot. 
-        You will be friendly but talk less short 6-7 words sentence reply    
-        """,
-        temperature=0.7
-    )
-)
+        system_instruction="Your name is Mindwired. You will reply me in short sentences okay"))
+ 
 
-# Making Chatbot
+# Making chatbot
+
+print('-'*45)
+print('Welcome to Chatbot\nPress Q to quit\nH for history\nT for token')
+print('-'*45)
+
 total_token=0
-
-print('-'*45)
-print(f'Basic Level Chatbot\nQ to quit.\nT for token\nH for history')
-print('-'*45)
-
+    
 while True:
-    user_input=input('You: ').strip() # takes user input using input function
-
-    if not user_input: # So if nothing written, it doesnot do anything.
+    user_input=input('You: ').strip()
+    
+    
+    if not user_input:
         continue
     
-    # Quit option Chatbot
+    # Check History 
     
-    if user_input.lower()=='q':
-        print('Quitting...')
-        exit
-        break
-        
-    
-    
-    # Checking total number of token used in session.
-    
-    if user_input.lower()=='t':
-        print(f'Total Token used:{total_token}')
-       
-        continue
-        
-        
-        
-    # Checking history of chat     
     if user_input.lower()=='h':
+     
         history=chat.get_history()
+    
         for i in history:
             print(f'{i.role}: {i.parts[0].text}')
-            
+
+    # Checking quit button
     
+    elif user_input.lower()=='q':
+        break
+    
+    # Check no of token used
+    
+    elif user_input.lower()=='t':
+        response=chat.send_message(user_input)
+        token_used=response.usage_metadata.total_token_count
+        total_token+=token_used
         
+        print(f'Token used: {token_used}')
+    else:
+        response=chat.send_message(user_input)
+        save_history()
+        print(f'AI: {response.text}')  
         
+     
+    print('-'*45) 
     
-    # Sending user message to gemini and getting back its reply
-    response=chat.send_message(user_input)
-    print(f'AI: {response.text}')
-    
-    
-    # here response is the variable in which it stores what gemini sends back everything. like text, meta data, usage info and possibly satefy
+   
     
     
-    # usage_meta_data is property that contains info about token usage 
-    token_used=response.usage_metadata.total_token_count
-    total_token+=token_used
-    
-    
-    # With every chat it prints total token used and used by this chat 
-    # print(f'Token used in chat {token_used}')
     
